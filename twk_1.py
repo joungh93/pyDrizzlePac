@@ -35,6 +35,7 @@ comb_cat = "catalog_"+comb_name+".list"
 os.system("rm -rfv "+dir_twk+comb_lst)
 os.system("rm -rfv "+dir_twk+comb_cat)
 os.system("rm -rfv "+dir_twk+"tweakreg*.log")
+os.system("rm -rfv "+dir_twk+"*_flc.fits")
 
 print('# ----- Total ----- #')
 os.system('cp -rpv '+dir_img+'*.fits '+dir_twk)
