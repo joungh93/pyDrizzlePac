@@ -1,4 +1,4 @@
-# pyDrizzlePac-v.1
+# pyDrizzlePac (ver 1.1)
 
 # Prerequisites
 Images/    # Directory of raw images
