@@ -3,7 +3,17 @@
 
 ## Prerequisites
 * You have to retrieve the HST raw images with ``*_flc.fits`` or ``*_flt.fits`` from [the Hubble MAST archive](http://archive.stsci.edu/hst/search.php).
+* The following Python modules should be installed.
+  * ``numpy <= 1.17.0``
+  * ``matplotlib >= 3.2.2``
+  * ``pandas >= 1.0.5``
+  * ``astropy >= 4.0.0``
+  * ``astroscrappy >= 1.0.5``
+  * ``sep >= 1.0.3``
+  * ``stwcs >= 1.5.3``
+  * ``drizzlepac >= 3.1.6``
 * [init_param.py](https://github.com/joungh93/pyDrizzlePac/blob/master/init_param.py) is the initial configurations to run the drizzle tasks. (You can revise it!)
+
 
 ## Workflow
 ```
