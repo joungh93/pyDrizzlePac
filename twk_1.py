@@ -79,7 +79,7 @@ f.close()
 # ----- Running tweakreg task ----- #
 twk_order = [ip.ref_flt, comb_lst.split('_')[1].split('.')[0], nref_flt]
 for twk in twk_order:
-	tweakreg.TweakReg('@input_'+twk+'.list', interactive=True, updatehdr=True,
+	tweakreg.TweakReg('@input_'+twk+'.list', interactive=False, updatehdr=True,
 		              runfile='tweakreg_'+twk+'.log', wcsname='TWEAK_'+twk,
 		              catfile='catalog_'+twk+'.list',
 		              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=1.5)
