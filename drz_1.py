@@ -8,11 +8,10 @@ Created on Mon Oct 15 16:23:45 2019
 
 
 import numpy as np
-import glob
-import os
+import glob, os
 import time
-import drizzlepac
 from drizzlepac import astrodrizzle
+import init_param as ip
 
 start_time = time.time()
 
@@ -23,16 +22,13 @@ start_time = time.time()
 
 # ----- Running astrodrizzle task ----- #
 current_dir = os.getcwd()
-dir_twk = 'tweak/'
 
-os.chdir(dir_twk)
-
-ref_flt = str(input("Enter reference filter name (i.e. F814W -> type '814'): "))
+os.chdir(ip.dir_twk)
 
 dir_drz = []
-dir_drz.append('drz_'+ref_flt)
+dir_drz.append('drz_'+ip.ref_flt)
 glob_drz = glob.glob('drz_*')
-glob_drz.remove('drz_'+ref_flt)
+glob_drz.remove('drz_'+ip.ref_flt)
 for i in np.arange(len(glob_drz)):
 	dir_drz.append(glob_drz[i])
 
@@ -45,18 +41,16 @@ for di in dir_drz:
 		astrodrizzle.AstroDrizzle('@input_'+flt+'.list', preserve=False, driz_sep_kernel='gaussian', driz_sep_pixfrac=1.0,
 			                      combine_type='minmed', combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=0.05,
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360)
-		os.system('rm -rfv final_drc_ctx.fits final_med.fits *single* *mask*.fits *blt.fits *Mask.fits')
-		os.system('cp -rpv final_drc_sci.fits ../'+flt+'.fits')
-		os.chdir('../')
 	else:
-		os.system('cp -rpv ../'+ref_flt+'.fits .')
+		os.system('cp -rpv ../../'+ip.dir_out+ip.ref_flt+'.fits .')
 		astrodrizzle.AstroDrizzle('@input_'+flt+'.list', preserve=False, driz_sep_kernel='gaussian', driz_sep_pixfrac=1.0,
 			                      combine_type='minmed', combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=0.05,
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360,
-			                      final_refimage=ref_flt+'.fits')
-		os.system('rm -rfv final_drc_ctx.fits final_med.fits *single* *mask*.fits *blt.fits *Mask.fits')
-		os.system('cp -rpv final_drc_sci.fits ../'+flt+'.fits')
-		os.chdir('../')
+			                      final_refimage=ip.ref_flt+'.fits')
+
+	os.system('rm -rfv final_drc_ctx.fits final_med.fits *single* *mask*.fits *blt.fits *Mask.fits')
+	os.system('cp -rpv final_drc_sci.fits ../../'+ip.dir_out+flt+'.fits')
+	os.chdir('../')
 
 
 # ----- After astrodrizzle task ----- #

@@ -8,125 +8,120 @@ Created on Mon Oct 14 10:49:33 2019
 
 
 import numpy as np
-import glob
-import os
+import glob, os
 import time
+import pandas as pd
 from astropy.io import fits
-from astropy.stats import SigmaClip
+from astropy.stats import sigma_clip
 from photutils import MMMBackground
 from photutils import StdBackgroundRMS
+import sep
+# from photutils import DAOStarFinder as DSF
+# from photutils import IRAFStarFinder as ISF
+# from photutils.aperture import CircularAperture as CAp
+# from photutils.aperture import CircularAnnulus as CAn
+# from photutils import aperture_photometry as apphot
+from stwcs.wcsutil import hstwcs
+import init_param as ip
 
 
 start_time = time.time()
 
 
 # ========== Code overview ========== #
-# 1. Making cosmic raw removed images
-# 2. Sky & sky sigma estimation
-# 3. SExtractor
+# Sky & sky sigma estimation
+# Aperture photometry with Python/sep
 # =================================== #
 
 
+# ----- Basic settings ----- #
 current_dir = os.getcwd()
 
-
-# ----- SExtractor initial parameters ----- #
-d_aper = "3.0,4.0,6.0"
-zmag = "25.0"
-pixscl = "0.05"
-seeing = "0.10"
-
-
 for w_dir in glob.glob('Phot_*'):
-
     w_dir = w_dir+'/'
-    
-    print('#---------- Working on '+w_dir+' ----------#')
-
-    # ----- Temporary images for photometry ----- #
     phot_dir = w_dir
 
-    tmp_name = glob.glob(phot_dir+'f*temp*.fits')
+    print('#---------- Working on '+phot_dir+' ----------#')
 
-    N_tmp1 = np.array([10*int(tmp_name[i].split('/')[1].split('_')[1]) for i in np.arange(len(tmp_name))])
-    N_tmp2 = np.array([int(tmp_name[i].split('.')[0][-1]) for i in np.arange(len(tmp_name))])
-    N_tmp = N_tmp1 + N_tmp2
-
-    tmp_order = np.argsort(N_tmp)
-
-    tmp_name = np.array(tmp_name)[tmp_order]
+    # ----- Reading image lists ----- #
+    imglist = np.genfromtxt(phot_dir+'image_names.log', dtype=None,
+                            encoding='ascii', names=('raw','sci'))
+    nshot = len(np.unique(imglist['raw']))
+    nchip = len(imglist) // nshot
 
 
-    # ----- 1. Making cosmic ray removed images ----- #
-    os.system('rm -rfv '+phot_dir+'f*sci*.fits')
-
-    nele = int(len(tmp_name)/4)
-
-    for i in np.arange(nele):
-        for j in [0, 1]:
-            img1, hdr1 = fits.getdata(tmp_name[4*i+2*j], header=True)
-            img2, hdr2 = fits.getdata(tmp_name[4*i+2*j+1], header=True)
-
-            var = (img2 >= 4000.0)
-            if (np.sum(var) >= 1):
-                img1[var] = -20000
-
-            fits.writeto(tmp_name[4*i+2*j].split('temp')[0]+'sci'+'%1d' %(j+1)+'.fits',
-                         img1, hdr1, overwrite=True)
-
-
-    # ----- Science images for photometry ----- #
-    sci_name = glob.glob(phot_dir+'f*sci*.fits')
-
-    N_sci1 = np.array([10*int(sci_name[i].split('/')[1].split('_')[1]) for i in np.arange(len(sci_name))])
-    N_sci2 = np.array([int(sci_name[i].split('.')[0][-1]) for i in np.arange(len(sci_name))])
-    N_sci = N_sci1 + N_sci2
-
-    sci_order = np.argsort(N_sci)
-
-    sci_name = np.array(sci_name)[sci_order]
-
-
-    # ----- 2. Sky & sky sigma estimation ----- #
-    sigma_clip = SigmaClip(sigma = 3.0)
-    bkg = MMMBackground(sigma_clip = sigma_clip)
-    bkgrms = StdBackgroundRMS(sigma_clip)
-
-    nshot = int(len(sci_name)/2)
-
+    # ----- The main loop ----- #
     os.system('rm -rfv '+phot_dir+'opt_1.dat')
     f = open(phot_dir+'opt_1.dat','w')
-    f.write('#  shot  sky  sig \n')
-
+    f.write('# shot  sky  sig \n')  
     for i in np.arange(nshot):
-        img1, hdr1 = fits.getdata(sci_name[2*i]), fits.getheader(sci_name[2*i])
-        var1 = (img1 > -20000.0)
-        sky1, sig1 = bkg(img1[var1]), bkgrms(img1[var1])
-        print(sci_name[2*i].split('/')[1]+' : %.2f  %.2f' %(sky1, sig1))
-        f.write('%d  %.2f  %.2f \n' %(i+1, sky1, sig1))
+        for j in np.arange(nchip):
+            # Reading images
+            imgidx = nchip*i+j
+            sci_name = imglist['sci'][imgidx].split('.fits')[0]
 
-        img2, hdr2 = fits.getdata(sci_name[2*i+1]), fits.getheader(sci_name[2*i+1])
-        var2 = (img2 > -20000.0)
-        sky2, sig2 = bkg(img2[var2]), bkgrms(img2[var2])
-        print(sci_name[2*i+1].split('/')[1]+' : %.2f  %.2f' %(sky2, sig2))
-        f.write('%d  %.2f  %.2f \n' %(i+1, sky2, sig2))
+            dat = fits.getdata(phot_dir+imglist['sci'][imgidx], header=False)
+            var = (dat > ip.cr_mask)
+            msk = np.zeros(dat.shape, dtype=bool)
+            msk[~var] = True
+            nsky = np.sum(msk)
+
+            h0 = fits.getheader(phot_dir+imglist['raw'][imgidx], ext=0)
+            w = hstwcs.HSTWCS(phot_dir+imglist['raw'][imgidx]+'[SCI,%d]' %(j+1))
+
+            # Sky & sky sigma estimation
+            dat = dat.byteswap().newbyteorder()
+            bkg = sep.Background(dat, mask=None, bw=64, bh=64, fw=3, fh=3)
+            sky, sig = bkg.globalback, bkg.globalrms
+            print(sci_name+' : %.2f  %.2f' %(sky, sig))
+            f.write('%d  %.2f  %.2f \n' %(i+1, sky, sig))
+
+            # Extracting sources
+            dat_sub = dat - bkg
+            src = sep.extract(dat_sub, ip.detect_thresh, err=bkg.globalrms)
+            n_src = len(src)
+            print("{0:d} sources are found.".format(n_src))
+
+            g = open(phot_dir+'src_'+sci_name+'.reg','w')
+            for k in np.arange(n_src):
+                g.write('{0:.4f}  {1:.4f}\n'.format(src['x'][k]+1, src['y'][k]+1))
+            g.close()
+
+            # Aperture photmetry
+            flx1, e_flx1, flag1 = sep.sum_circle(dat_sub, src['x'], src['y'],
+                                                 ip.r_ap1, err=bkg.globalrms,
+                                                 gain=ip.gain, subpix=0)
+            flx2, e_flx2, flag2 = sep.sum_circle(dat_sub, src['x'], src['y'],
+                                                 ip.r_ap2, err=bkg.globalrms,
+                                                 gain=ip.gain, subpix=0)
+            itime, exptime = h0['EXPTIME'], h0['EXPTIME']
+            nflx1, nflx2 = flx1/itime, flx2/itime
+            tflx1, tflx2 = nflx1*exptime, nflx2*exptime
+            mag1 = ip.zmag - 2.5*np.log10(nflx1)
+            mag2 = ip.zmag - 2.5*np.log10(nflx2)
+            e_mag1 = (2.5/np.log(10.0)) * (e_flx1/tflx1)
+            e_mag2 = (2.5/np.log(10.0)) * (e_flx2/tflx2)
+
+            # XY to WCS
+            ra, dec = w.all_pix2world(src['x']+1, src['y']+1, 1)
+
+            # Saving the results
+            df = pd.DataFrame(data = {'x' : src['x']+1,
+                                      'y' : src['y']+1,
+                                      'mag1' : mag1,
+                                      'mag2' : mag2,
+                                      'e_mag1' : e_mag1,
+                                      'e_mag2' : e_mag2,
+                                      'flx1' : nflx1,
+                                      'flx2' : nflx2,
+                                      'e_flx1' : e_flx1/itime,
+                                      'e_flx2' : e_flx2/itime,
+                                      'ra' : ra,
+                                      'dec' : dec})
+            df = df.fillna(99.0)
+            df.to_pickle(phot_dir+sci_name+'.pkl')
 
     f.close()
-
-
-    # ----- 3. SExtractor ----- #
-    f = open(phot_dir+'sephot.sh', 'w')
-    for i in np.arange(len(sci_name)):
-        sci_img = sci_name[i].split('/')[1]
-        txt1 = 'sex '+sci_img+' -c '+current_dir+'/npsf.sex'
-        txt2 = ' -CATALOG_NAME '+sci_img.split('.fits')[0]+'.cat -DETECT_MINAREA 4 -PHOT_APERTURES '+d_aper
-        txt3 = ' -MAG_ZEROPOINT '+zmag+' -PIXEL_SCALE '+pixscl+' -SEEING_FWHM '+seeing
-        f.write(txt1+txt2+txt3+'\n')
-    f.close()
-
-    os.chdir(phot_dir)
-    os.system('sh sephot.sh')
-    os.chdir(current_dir)
 
 
 # Printing the running time

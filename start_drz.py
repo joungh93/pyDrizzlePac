@@ -12,7 +12,8 @@ import glob
 import os
 import time
 from astropy.io import fits
-from pyraf import iraf
+from astroscrappy import detect_cosmics
+import init_param as ip
 
 
 start_time = time.time()
@@ -20,22 +21,20 @@ start_time = time.time()
 
 # ========== Code overview ========== #
 # Startup settings for drizzling of HST ACS, WFC3/IR, WFC3/UVIS images
+# Creating cosmic ray removed images
 # =================================== #
 
 
 # ----- Initialization ----- #
 os.system('rm -rfv Phot_* tweak')
-
-
-# ----- Raw images ----- #
-img_dir = 'Images/'
-img_name = glob.glob(img_dir+'*.fits')
+os.system('rm -rfv '+ip.dir_out)
+os.system('mkdir '+ip.dir_out)
 
 
 # ----- Reading instrument and filters from the headers of images ----- #
 inst, filt, inst_filt = [], [], []
-for i in np.arange(len(img_name)):
-    hdr = fits.getheader(img_name[i], ext=0)
+for i in np.arange(len(ip.img_name)):
+    hdr = fits.getheader(ip.img_name[i], ext=0)
     inst.append(hdr['INSTRUME'])
     if (hdr['INSTRUME'] == 'ACS'):
         if (hdr['FILTER1'][0:5] != 'CLEAR'):
@@ -61,12 +60,12 @@ for i in np.arange(nfilt):
 
 
 # ----- Copying images to the corresponding directories ----- #
-for i in np.arange(len(img_name)):
+for i in np.arange(len(ip.img_name)):
     dir_filt = [filt[j][1:4] for j in np.arange(len(filt))]
-    os.system('cp -rpv '+img_name[i]+' Phot_'+dir_filt[i])
+    os.system('cp -rpv '+ip.img_name[i]+' Phot_'+dir_filt[i])
 
 
-# ----- Making lists & Imcopy tasks ----- #
+# ----- Making lists & masking cosmic rays ----- #
 current_dir = os.getcwd()
 
 for i in np.arange(nfilt):
@@ -98,27 +97,35 @@ for i in np.arange(nfilt):
     f2.close()
     os.system('cp -rpv catalog.list ../tweak/catalog_'+ufilt[i][1:4]+'.list')
 
-    # Imcopy tasks (to separate extensions) ---> ACS 4 extensions & WFC3/IR 2 extensions
-    iraf.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])    # Check iraf directory 'iraf.pwd()'    
+    # Creating cosmic ray removed images ---> ACS 4 extensions & WFC3/IR 2 extensions
+    os.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])
+    f = open('image_names.log','w')    
     for j in np.arange(len(order)):
+        # hd0 = fits.getheader(str(np.array(img)[order][j]), ext=0)
         if (uinst_filt[i].split('/')[0] == 'ACS'):
-            iraf.imcopy(input=str(np.array(img)[order][j])+'[1]',
-                        output='f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_temp1.fits')    # [SCI]
-            iraf.imcopy(input=str(np.array(img)[order][j])+'[3]',
-                        output='f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_temp2.fits')    # [DQ]
-            iraf.imcopy(input=str(np.array(img)[order][j])+'[4]',
-                        output='f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_temp3.fits')    # [SCI]
-            iraf.imcopy(input=str(np.array(img)[order][j])+'[6]',
-                        output='f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_temp4.fits')    # [DQ]
+            ext_list = [1, 3, 4, 6]
         if (uinst_filt[i].split('/')[0] == 'WFC3'):
-            iraf.imcopy(input=str(np.array(img)[order][j])+'[1]',
-                        output='f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_temp1.fits')    # [SCI]
-            iraf.imcopy(input=str(np.array(img)[order][j])+'[3]',
-                        output='f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_temp2.fits')    # [DQ]
-
+            ext_list = [1, 3]
+        for k in np.arange(len(ext_list)):
+            if (k % 2 == 0):
+                print("Writing "+'f'+ufilt[i][1:4]+'_%02d_sci%1d.fits' %(j+1, 1+k//2)+"...")
+                sci, hdr = fits.getdata(str(np.array(img)[order][j]), ext=ext_list[k], header=True)
+                # dq = fits.getdata(str(np.array(img)[order][j]), ext=ext_list[k+1], header=False)
+                # cr = (dq >= ip.cr_thre)
+                # if (np.sum(cr) >= 1):
+                #     sci[cr] = ip.cr_mask
+                crmask, cleanarr = detect_cosmics(sci, gain=ip.gain, cleantype='medmask')
+                fits.writeto('f'+ufilt[i][1:4]+'_%02d_sci%1d.fits' %(j+1, 1+k//2),
+                             cleanarr/ip.gain, hdr, overwrite=True)
+                f.write(str(np.array(img)[order][j]))
+                f.write('\t')
+                f.write('f'+ufilt[i][1:4]+'_%02d_sci%1d.fits' %(j+1, 1+k//2))
+                f.write('\n')
+            else:
+                continue
+    f.close()
 
 os.chdir(current_dir)
-iraf.chdir(current_dir)
 
 
 # Printing the running time

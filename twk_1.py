@@ -8,11 +8,11 @@ Created on Mon Oct 15 16:23:45 2019
 
 
 import numpy as np
-import glob
-import os
+import glob, os
 import time
-import drizzlepac
 from drizzlepac import tweakreg
+import init_param as ip
+
 
 start_time = time.time()
 
@@ -22,33 +22,29 @@ start_time = time.time()
 
 
 # ----- Initial structure setting ----- #
-ref_flt = str(input("Enter reference filter name (i.e. F814W -> type '814'): "))
-
 current_dir = os.getcwd()
-dir_img = 'Images/'
-dir_twk = 'tweak/'
 
 comb_name = "com"
 comb_lst = "input_"+comb_name+".list"
 comb_cat = "catalog_"+comb_name+".list"
 
-os.system("rm -rfv "+dir_twk+comb_lst)
-os.system("rm -rfv "+dir_twk+comb_cat)
-os.system("rm -rfv "+dir_twk+"tweakreg*.log")
-os.system("rm -rfv "+dir_twk+"*_flc.fits")
+os.system("rm -rfv "+ip.dir_twk+comb_lst)
+os.system("rm -rfv "+ip.dir_twk+comb_cat)
+os.system("rm -rfv "+ip.dir_twk+"tweakreg*.log")
+os.system("rm -rfv "+ip.dir_twk+"*_flc.fits")
 
 print('# ----- Total ----- #')
-os.system('cp -rpv '+dir_img+'*.fits '+dir_twk)
-os.chdir(dir_twk)
+os.system('cp -rpv '+ip.dir_img+'*.fits '+ip.dir_twk)
+os.chdir(ip.dir_twk)
 
 for inp in glob.glob('input_*.list'):
 	flt = inp.split('input')[1].split('.')[0]
 	print('# ----- filter '+flt[1:]+' ----- #')
 	flc = np.genfromtxt(inp, dtype=None, encoding='ascii')
 	for file in flc:
-		os.system('cp -rpv ../'+dir_img+file+' drz'+flt+'/')
+		os.system('cp -rpv ../'+ip.dir_img+file+' drz'+flt+'/')
 	os.system('cp -rpv ../Phot'+flt+'/*.mat.coo .')
-	if (flt[1:] == ref_flt):
+	if (flt[1:] == ip.ref_flt):
 		ref_img = flc[0]
 	else:
 		nref_flt = flt[1:]
@@ -59,7 +55,7 @@ nref_line = []
 for cat in glob.glob('catalog_*.list'):
 	flt = cat.split('catalog')[1].split('.')[0]
 	g = open(cat, 'r')
-	if (flt[1:] == ref_flt):
+	if (flt[1:] == ip.ref_flt):
 		ref_line.append(g.readline())
 	else:
 		for i in np.arange(len(nref_img)):
@@ -81,10 +77,12 @@ f.close()
 
 
 # ----- Running tweakreg task ----- #
-twk_order = [ref_flt, comb_lst.split('_')[1].split('.')[0], nref_flt]
+twk_order = [ip.ref_flt, comb_lst.split('_')[1].split('.')[0], nref_flt]
 for twk in twk_order:
-	tweakreg.TweakReg('@input_'+twk+'.list', interactive=True, updatehdr=True, runfile='tweakreg_'+twk+'.log', wcsname='TWEAK_'+twk,
-		              catfile='catalog_'+twk+'.list', xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=1.5)
+	tweakreg.TweakReg('@input_'+twk+'.list', interactive=True, updatehdr=True,
+		              runfile='tweakreg_'+twk+'.log', wcsname='TWEAK_'+twk,
+		              catfile='catalog_'+twk+'.list',
+		              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=1.5)
 
 
 # ----- After tweakreg task ----- #
