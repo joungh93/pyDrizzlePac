@@ -208,7 +208,7 @@ for w_dir in glob.glob('Phot_*'):
                               dtype=None, encoding='ascii', names=('x','y','flx'))
 
         # Matching point sources
-        tol = 0.1 / 3600.0
+        tol = 1.0 / 3600.0
 
         src1 = SkyCoord(ra=ra1*u.degree, dec=dec1*u.degree)
         src2 = SkyCoord(ra=ra2*u.degree, dec=dec2*u.degree)
