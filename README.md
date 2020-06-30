@@ -17,9 +17,18 @@ You should activate the ``astroconda`` environment which contains ``DrizzlePac``
 
 ```
 conda activate astroconda
+```
+
+After revising ``init_param.py``, the following simple commands will work well.
+
+(Still you have to check whether the resulting drizzled images are good or not.)
+
+```
 python start_drz.py
 python opt_1.py
 python mat_1.py
 python twk_1.py
 python drz_1.py
 ```
+
+To update this code is an on-going task... :crying_cat_face:
