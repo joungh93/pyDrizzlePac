@@ -8,10 +8,11 @@
   * ``matplotlib >= 3.2.2``
   * ``pandas >= 1.0.5``
   * ``astropy >= 4.0.0``
-  * ``astroscrappy >= 1.0.5``
-  * ``sep >= 1.0.3``
-  * ``stwcs >= 1.5.3``
-  * ``drizzlepac >= 3.1.6``
+  * ``astroscrappy >= 1.0.5`` ([Ref](https://astroscrappy.readthedocs.io/en/latest/))
+  * ``sep >= 1.0.3`` ([Ref](https://sep.readthedocs.io/en/v1.0.x/))
+  * ``stwcs >= 1.5.3`` ([Ref](https://stwcs.readthedocs.io/en/latest/hstwcs.html))
+* The ``astroconda`` environement which contains ``DrizzlePac`` module should be installed. ([Ref](https://astroconda.readthedocs.io/en/latest/getting_started.html#))
+  * ``drizzlepac >= 3.1.6`` ([Ref](https://drizzlepac.readthedocs.io/en/latest/))
 * [init_param.py](https://github.com/joungh93/pyDrizzlePac/blob/master/init_param.py) is the initial configurations to run the drizzle tasks. (You can revise it!)
 
 
@@ -21,9 +22,6 @@ cd /your_working_directory/
 git clone https://github.com/joungh93/pyDrizzlePac.git
 ```
 You should activate the ``astroconda`` environment which contains ``DrizzlePac`` module.
-* Reference links
-  * [``astroconda``](https://astroconda.readthedocs.io/en/latest/getting_started.html#)
-  * [``DrizzlePac``](https://drizzlepac.readthedocs.io/en/latest/)
 
 ```
 conda activate astroconda
