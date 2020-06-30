@@ -45,12 +45,10 @@ The above python workflows can be also executed by a simple shell script command
 
 ```
 vi run.sh
-  python start_drz.py
-  python opt_1.py
-  python mat_1.py
-  python twk_1.py
-  python drz_1.py
+  python *.py
+conda activate astroconda
 sh run.sh
 ```
 
+## Future works
 To update this code is an on-going task... :crying_cat_face: :sweat_drops:
