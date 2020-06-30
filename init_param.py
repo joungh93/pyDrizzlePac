@@ -16,9 +16,9 @@ dir_img = 'Images/'
 img_name = glob.glob(dir_img+'*.fits')
 
 
-# ----- Cosmic ray masking parameters ----- #
-cr_thre = 4000.0
-cr_mask = -20000.0
+# # ----- Cosmic ray masking parameters ----- #
+# cr_thre = 4000.0
+# cr_mask = -20000.0
 
 
 # ----- Initial photometric parameters ----- #
@@ -32,11 +32,11 @@ detect_thresh = 1.5
 
 
 # ----- Parameter cut ----- #
-err_cut = 0.20    # magnitude error cut
+err_cut = 0.30    # magnitude error cut
 cidx_lo_cut = 0.05    # lower C index cut
-cidx_hi_cut = 0.30    # higher C index cut
-mag_lo_cut = 16.5    # brighter magnitude cut
-mag_hi_cut = 23.0    # fainter magnitude cut
+cidx_hi_cut = 0.60    # higher C index cut
+mag_lo_cut = 17.0    # brighter magnitude cut
+mag_hi_cut = 25.0    # fainter magnitude cut
 
 
 # ----- Initial setting for running drizzlepac ----- #
