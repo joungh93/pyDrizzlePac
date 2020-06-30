@@ -8,11 +8,11 @@
   * ``matplotlib >= 3.2.2``
   * ``pandas >= 1.0.5``
   * ``astropy >= 4.0.0``
-  * ``astroscrappy >= 1.0.5`` ([Ref](https://astroscrappy.readthedocs.io/en/latest/))
-  * ``sep >= 1.0.3`` ([Ref](https://sep.readthedocs.io/en/v1.0.x/))
-  * ``stwcs >= 1.5.3`` ([Ref](https://stwcs.readthedocs.io/en/latest/hstwcs.html))
-* The ``astroconda`` environement which contains ``DrizzlePac`` module should be installed. ([Ref](https://astroconda.readthedocs.io/en/latest/getting_started.html#))
-  * ``drizzlepac >= 3.1.6`` ([Ref](https://drizzlepac.readthedocs.io/en/latest/))
+  * ``astroscrappy >= 1.0.5`` ([Reference link](https://astroscrappy.readthedocs.io/en/latest/))
+  * ``sep >= 1.0.3`` ([Reference link](https://sep.readthedocs.io/en/v1.0.x/))
+  * ``stwcs >= 1.5.3`` ([Reference link](https://stwcs.readthedocs.io/en/latest/hstwcs.html))
+* The ``astroconda`` environement which contains ``DrizzlePac`` module should be installed. ([Reference link](https://astroconda.readthedocs.io/en/latest/getting_started.html#))
+  * ``drizzlepac >= 3.1.6`` ([Reference link](https://drizzlepac.readthedocs.io/en/latest/))
 * [init_param.py](https://github.com/joungh93/pyDrizzlePac/blob/master/init_param.py) is the initial configurations to run the drizzle tasks. (You can revise it!)
 
 
