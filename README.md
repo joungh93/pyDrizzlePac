@@ -39,7 +39,7 @@ python twk_1.py
 python drz_1.py
 ```
 
-The above python workflows can be also executed by a simple shell script command.
+The above python codes can be also executed by a simple shell script command.
 
 ```
 vi run.sh
