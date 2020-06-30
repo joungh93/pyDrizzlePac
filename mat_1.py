@@ -244,68 +244,6 @@ for w_dir in glob.glob('Phot_*'):
         g1.close()
         g2.close()
 
-        # g1 = open(phot_dir+sci1_name+'.mat.reg','w')
-        # g1.write('global color=green font="helvetica 10 normal" select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
-        # for k in np.arange(len(midx1)):
-        #     g1.write('image;circle(%.2f, %.2f, 20 \n' \
-        #              %(dcut1['x'][midx1][k], dcut1['y'][midx1][k]))
-        # g1.close()
-
-        # f2 = open(phot_dir+pkl_name[i+2].split('/')[1].split('.')[0]+'.mat.coo','w')
-        # for k in np.arange(len(midx2)):
-        #     f2.write('%.2f  %.2f  %.2f \n' %(dcut2['x'][midx2][k], dcut2['y'][midx2][k], dcut2['flx'][midx2][k]))
-        # f2.close()
-
-        # g2 = open(phot_dir+pkl_name[i+2].split('/')[1].split('.')[0]+'.mat.reg','w')
-        # g2.write('global color=green font="helvetica 10 normal" select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
-        # for k in np.arange(len(midx2)):
-        #     g2.write('image;circle(%.2f, %.2f, 20 \n' \
-        #              %(dcut2['x'][midx2][k], dcut2['y'][midx2][k]))
-        # g2.close()
-
-
-'''            
-
-
-        # Matching point sources
-        tol = 0.2/3600.0
-
-        src1 = SkyCoord(ra=ra1*u.degree, dec=dec1*u.degree)
-        src2 = SkyCoord(ra=ra2*u.degree, dec=dec2*u.degree)
-
-        idx, d2d, d3d = src1.match_to_catalog_sky(src2)
-        matched = d2d.value < tol
-        midx1 = np.where(matched)[0]
-        midx2 = idx[matched]
-
-        print("# Point sources --- {0:d},{1:d} : {2:d} matched \n".format(len(ra1), len(ra2), np.sum(matched)))
-
-
-        # Writing matched catalogs & regions
-        f1 = open(phot_dir+pkl_name[i].split('/')[1].split('.')[0]+'.mat.coo','w')
-        for k in np.arange(len(midx1)):
-            f1.write('%.2f  %.2f  %.2f \n' %(dcut1['x'][midx1][k], dcut1['y'][midx1][k], dcut1['flx'][midx1][k]))
-        f1.close()
-
-        g1 = open(phot_dir+pkl_name[i].split('/')[1].split('.')[0]+'.mat.reg','w')
-        g1.write('global color=green font="helvetica 10 normal" select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
-        for k in np.arange(len(midx1)):
-            g1.write('image;circle(%.2f, %.2f, 20 \n' \
-                     %(dcut1['x'][midx1][k], dcut1['y'][midx1][k]))
-        g1.close()
-
-        f2 = open(phot_dir+pkl_name[i+2].split('/')[1].split('.')[0]+'.mat.coo','w')
-        for k in np.arange(len(midx2)):
-            f2.write('%.2f  %.2f  %.2f \n' %(dcut2['x'][midx2][k], dcut2['y'][midx2][k], dcut2['flx'][midx2][k]))
-        f2.close()
-
-        g2 = open(phot_dir+pkl_name[i+2].split('/')[1].split('.')[0]+'.mat.reg','w')
-        g2.write('global color=green font="helvetica 10 normal" select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
-        for k in np.arange(len(midx2)):
-            g2.write('image;circle(%.2f, %.2f, 20 \n' \
-                     %(dcut2['x'][midx2][k], dcut2['y'][midx2][k]))
-        g2.close()
-'''
 
 # Printing the running time
 print('\n')
