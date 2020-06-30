@@ -16,11 +16,6 @@ from astropy.stats import sigma_clip
 from photutils import MMMBackground
 from photutils import StdBackgroundRMS
 import sep
-# from photutils import DAOStarFinder as DSF
-# from photutils import IRAFStarFinder as ISF
-# from photutils.aperture import CircularAperture as CAp
-# from photutils.aperture import CircularAnnulus as CAn
-# from photutils import aperture_photometry as apphot
 from stwcs.wcsutil import hstwcs
 import init_param as ip
 
