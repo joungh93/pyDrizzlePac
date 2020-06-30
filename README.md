@@ -1,19 +1,25 @@
-# pyDrizzlePac (ver 1.1)
+# pyDrizzlePac
+(updated on 2020. 06. 30.)
 
-# Prerequisites
-Images/    # Directory of raw images
+## Prerequisites
+* You have to retrieve the HST raw images with ``*_flc.fits`` or ``*_flt.fits`` from [the Hubble MAST archive](http://archive.stsci.edu/hst/search.php).
+* [init_param.py](https://github.com/joungh93/pyDrizzlePac/blob/master/init_param.py) is the initial configurations to run the drizzle tasks. (You can revise it!)
 
-npsf.sex    # Initial SExtractor configuration file
+## Workflow
+```
+cd /your_working_directory/
+git clone https://github.com/joungh93/pyDrizzlePac.git
+```
+You should activate the ``astroconda`` environment which contains ``DrizzlePac`` module.
+* Reference links
+  * [``astroconda``](https://astroconda.readthedocs.io/en/latest/getting_started.html#)
+  * [``DrizzlePac``](https://drizzlepac.readthedocs.io/en/latest/)
 
-npsf.param    # Initial SExtractor parameter file
-
-# Workflow
-start_drz.py    # 1st python code
-
-opt_1.py    # 2nd python code
-
-mat_1.py    # 3rd python code
-
-twk_1.py    # 4th python code
-
-drz_1.py    # 5th python code
+```
+conda activate astroconda
+python start_drz.py
+python opt_1.py
+python mat_1.py
+python twk_1.py
+python drz_1.py
+```
