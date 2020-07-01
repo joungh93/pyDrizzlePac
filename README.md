@@ -1,6 +1,11 @@
 # pyDrizzlePac
 (updated on 2020. 06. 30.)
 
+
+## Description
+A Python package for automatically drizzling the raw data of the Hubble Space Telescope
+
+
 ## Prerequisites
 * You have to retrieve the HST raw images with ``*_flc.fits`` or ``*_flt.fits`` from [the Hubble MAST archive](http://archive.stsci.edu/hst/search.php).
 * The following Python modules should be installed.
@@ -47,6 +52,7 @@ vi run.sh
 conda activate astroconda
 sh run.sh
 ```
+
 
 ## Future works
 To update this code is an on-going task... :crying_cat_face: :sweat_drops:
