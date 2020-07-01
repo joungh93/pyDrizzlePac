@@ -41,8 +41,6 @@ for inp in glob.glob('input_*.list'):
 	flt = inp.split('input')[1].split('.')[0]
 	print('# ----- filter '+flt[1:]+' ----- #')
 	flc = np.genfromtxt(inp, dtype=None, encoding='ascii')
-	for file in flc:
-		os.system('cp -rpv ../'+ip.dir_img+file+' drz'+flt+'/')
 	os.system('cp -rpv ../Phot'+flt+'/*.mat.coo .')
 	if (flt[1:] == ip.ref_flt):
 		ref_img = flc[0]
@@ -82,11 +80,22 @@ for twk in twk_order:
 	tweakreg.TweakReg('@input_'+twk+'.list', interactive=False, updatehdr=True,
 		              runfile='tweakreg_'+twk+'.log', wcsname='TWEAK_'+twk,
 		              catfile='catalog_'+twk+'.list',
-		              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=1.5)
+		              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=1.5,
+					  tolerance=2.0)
 
 
 # ----- After tweakreg task ----- #
 os.system('rm -rfv *catalog.coo *.match *xy*.list')
+
+# Copying header-updated images to drizzle path
+for inp in glob.glob('input_*.list'):
+	flt = inp.split('input')[1].split('.')[0]
+	if not (flt == '_'+comb_name):
+		print('# ----- filter '+flt[1:]+' ----- #')
+		flc = np.genfromtxt(inp, dtype=None, encoding='ascii')
+		for file in flc:
+			os.system('cp -rpv '+file+' drz'+flt+'/')
+			
 os.chdir(current_dir)
 
 
