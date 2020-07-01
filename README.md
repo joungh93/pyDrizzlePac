@@ -21,7 +21,7 @@ A Python package for automatically drizzling the raw data of the Hubble Space Te
 * [init_param.py](https://github.com/joungh93/pyDrizzlePac/blob/master/init_param.py) is the initial configurations to run the drizzle tasks. (You can revise it!)
 
 
-## Workflow
+## Workflows
 ```
 cd /your_working_directory/
 git clone https://github.com/joungh93/pyDrizzlePac.git
