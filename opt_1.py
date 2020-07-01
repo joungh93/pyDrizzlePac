@@ -13,8 +13,6 @@ import time
 import pandas as pd
 from astropy.io import fits
 from astropy.stats import sigma_clip
-from photutils import MMMBackground
-from photutils import StdBackgroundRMS
 import sep
 from stwcs.wcsutil import hstwcs
 import init_param as ip
@@ -56,10 +54,6 @@ for w_dir in glob.glob('Phot_*'):
             sci_name = imglist['sci'][imgidx].split('.fits')[0]
 
             dat = fits.getdata(phot_dir+imglist['sci'][imgidx], header=False)
-#             var = (dat > ip.cr_mask)
-#             msk = np.zeros(dat.shape, dtype=bool)
-#             msk[~var] = True
-#             nsky = np.sum(msk)
 
             h0 = fits.getheader(phot_dir+imglist['raw'][imgidx], ext=0)
             w = hstwcs.HSTWCS(phot_dir+imglist['raw'][imgidx]+'[SCI,%d]' %(j+1))
