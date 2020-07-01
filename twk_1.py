@@ -80,7 +80,7 @@ for twk in twk_order:
 	tweakreg.TweakReg('@input_'+twk+'.list', interactive=False, updatehdr=True,
 		              runfile='tweakreg_'+twk+'.log', wcsname='TWEAK_'+twk,
 		              catfile='catalog_'+twk+'.list',
-		              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=1.5,
+		              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=ip.tolerance,
 					  tolerance=2.0)
 
 
