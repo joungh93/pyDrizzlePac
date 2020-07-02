@@ -1,5 +1,5 @@
 # pyDrizzlePac
-(updated on 2020. 07. 01.)
+(Updated on 2020. 07. 02.)
 
 
 ## Description
