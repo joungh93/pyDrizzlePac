@@ -31,8 +31,8 @@ comb_cat = "catalog_"+comb_name+".list"
 os.system("rm -rfv "+ip.dir_twk+comb_lst)
 os.system("rm -rfv "+ip.dir_twk+comb_cat)
 os.system("rm -rfv "+ip.dir_twk+"tweakreg*.log")
-os.system("rm -rfv "+ip.dir_twk+"*_flc.fits")
-os.system("rm -rfv "+ip.dir_twk+".png")
+os.system("rm -rfv "+ip.dir_twk+"*_fl*.fits")
+os.system("rm -rfv "+ip.dir_twk+"*.png")
 
 print('# ----- Total ----- #')
 os.system('cp -rpv '+ip.dir_img+'*.fits '+ip.dir_twk)
