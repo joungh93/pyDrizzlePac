@@ -16,10 +16,6 @@ import init_param as ip
 start_time = time.time()
 
 
-### Note that you should set astroconda environment before running the code!
-### Note that this code is for drizzling of only two bands.
-
-
 # ----- Running astrodrizzle task ----- #
 current_dir = os.getcwd()
 
