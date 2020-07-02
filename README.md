@@ -57,4 +57,5 @@ sh run.sh
 ## Future works
 * Current version sets the reference image as the "first observation date" image. To select the reference image manually will be possible in the future version.
 * Iteration of drizzling might be added.
+
 To update this code is an on-going task... :crying_cat_face: :sweat_drops:
