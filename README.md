@@ -55,7 +55,7 @@ sh run.sh
 
 
 ## Future works
-* Current version sets the reference image as the image with _**the first observation date**_. To select the reference image manually will be possible in the future version.
+* Current version sets the reference image to the shot with _**the first observation date**_. This setting is generally good enough to get well-drizzled image, but it could get some troubles if the image with the first observation date has bad quality. It can be possible in the future version to choose the reference image as one wants to use.
 * Iteration of drizzling might be added.
 
 To update this code is an on-going task... :crying_cat_face: :sweat_drops:
