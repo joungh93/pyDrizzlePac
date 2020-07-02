@@ -8,8 +8,7 @@ Created on Mon Oct 14 10:43:27 2019
 
 
 import numpy as np
-import glob
-import os
+import glob, os
 import time
 from astropy.io import fits
 from astroscrappy import detect_cosmics
