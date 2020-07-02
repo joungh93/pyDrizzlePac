@@ -37,11 +37,12 @@ After revising ``init_param.py``, the following simple commands will work well.
 (Still you have to check whether the resulting drizzled images are good or not.)
 
 ```
-python start_drz.py
-python opt_1.py
-python mat_1.py
-python twk_1.py
-python drz_1.py
+ipython
+run start_drz.py
+run opt_1.py
+run mat_1.py
+run twk_1.py
+run drz_1.py
 ```
 
 The above python codes can be also executed by a simple shell script command.
@@ -49,10 +50,11 @@ The above python codes can be also executed by a simple shell script command.
 ```
 vi run.sh
   python *.py
-conda activate astroconda
 sh run.sh
 ```
 
 
 ## Future works
+* Current version sets the reference image as the "first observation date" image. To select the reference image manually will be possible in the future version.
+* Iteration of drizzling might be added.
 To update this code is an on-going task... :crying_cat_face: :sweat_drops:
