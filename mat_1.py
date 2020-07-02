@@ -189,60 +189,45 @@ for w_dir in glob.glob('Phot_*'):
     # =============== Step 3 =============== #
     # ====================================== #
 
-    for i in np.arange(nchip*(nshot-1)):
-        sci1_name = pkl_name[i].split('/')[1].split('.pkl')[0]
-        sci2_name = pkl_name[i+nchip].split('/')[1].split('.pkl')[0]
+    # Reference ra, dec
+    idx_ref, ra_ref, dec_ref = 0, np.empty(0), np.empty(0)
+    for chip in np.arange(nchip):
+        sci_name = pkl_name[idx_ref+chip].split('/')[1].split('.pkl')[0]
+        dcut = np.genfromtxt(phot_dir+sci_name+'.cut.coo',
+                             dtype=None, encoding='ascii', names=('ra','dec'))
+        ra_ref = np.append(ra_ref, dcut['ra'])
+        dec_ref = np.append(dec_ref, dcut['dec'])
 
-        # Reading the point source coordinate (WCS)
-        dcut1 = np.genfromtxt(phot_dir+sci1_name+'.cut.coo',
-                              dtype=None, encoding='ascii', names=('ra','dec'))
-        dcut2 = np.genfromtxt(phot_dir+sci2_name+'.cut.coo',
-                              dtype=None, encoding='ascii', names=('ra','dec'))
-        ra1, dec1 = dcut1['ra'], dcut1['dec']
-        ra2, dec2 = dcut2['ra'], dcut2['dec']
+    # Finding matched point sources
+    src0 = SkyCoord(ra=ra_ref*u.degree, dec=dec_ref*u.degree)
+    for i in np.arange(len(imglist)):
+        sci_name = pkl_name[i].split('/')[1].split('.pkl')[0]
+        dcut = np.genfromtxt(phot_dir+sci_name+'.cut.coo',
+                             dtype=None, encoding='ascii', names=('ra','dec'))
+        ra, dec = dcut['ra'], dcut['dec']
 
-        # Reading the point source data
-        dcut1 = np.genfromtxt(phot_dir+sci1_name+'.cut.dat',
-                              dtype=None, encoding='ascii', names=('x','y','flx'))
-        dcut2 = np.genfromtxt(phot_dir+sci2_name+'.cut.dat',
-                              dtype=None, encoding='ascii', names=('x','y','flx'))
-
-        # Matching point sources
         tol = ip.tolerance / 3600.0
-
-        src1 = SkyCoord(ra=ra1*u.degree, dec=dec1*u.degree)
-        src2 = SkyCoord(ra=ra2*u.degree, dec=dec2*u.degree)
-
-        idx, d2d, d3d = src1.match_to_catalog_sky(src2)
+        src = SkyCoord(ra=ra*u.degree, dec=dec*u.degree)
+        idx, d2d, d3d = src.match_to_catalog_sky(src0)
         matched = d2d.value < tol
         n_mch = np.sum(matched)
-        midx1 = np.where(matched)[0]
-        midx2 = idx[matched]
-
-        print("# Point sources --- {0:d},{1:d} : {2:d} matched \n".format(len(ra1), len(ra2), n_mch))
+        midx = np.where(matched)[0]        
+        print("# Point sources --- {0:d},{1:d} : {2:d} matched \n".format(len(ra), len(ra_ref), n_mch))
 
         # Writing matched catalogs & regions
-        f1 = open(phot_dir+sci1_name+'.mat.coo','w')
-        f2 = open(phot_dir+sci2_name+'.mat.coo','w')
-        g1 = open(phot_dir+sci1_name+'.mat.reg','w')
-        g1.write('global color=green font="helvetica 10 normal" ')
-        g1.write('select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
-        g2 = open(phot_dir+sci2_name+'.mat.reg','w')
-        g2.write('global color=green font="helvetica 10 normal" ')
-        g2.write('select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
+        dpoi = np.genfromtxt(phot_dir+sci_name+'.cut.dat',
+                             dtype=None, encoding='ascii', names=('x','y','flx'))
+        f = open(phot_dir+sci_name+'.mat.coo','w')
+        g = open(phot_dir+sci_name+'.mat.reg','w')
+        g.write('global color=red font="helvetica 10 normal" ')
+        g.write('select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
         for k in np.arange(n_mch):
-            f1.write('%.2f  %.2f  %.2f \n' \
-                     %(dcut1['x'][midx1][k], dcut1['y'][midx1][k], dcut1['flx'][midx1][k]))
-            f2.write('%.2f  %.2f  %.2f \n' \
-                     %(dcut2['x'][midx2][k], dcut2['y'][midx2][k], dcut2['flx'][midx2][k]))
-            g1.write('image;circle(%.2f, %.2f, 20 \n' \
-                     %(dcut1['x'][midx1][k], dcut1['y'][midx1][k]))
-            g2.write('image;circle(%.2f, %.2f, 20 \n' \
-                     %(dcut2['x'][midx2][k], dcut2['y'][midx2][k]))
-        f1.close()
-        f2.close()
-        g1.close()
-        g2.close()
+            f.write('%.2f  %.2f  %.2f \n' \
+                     %(dpoi['x'][midx][k], dpoi['y'][midx][k], dpoi['flx'][midx][k]))
+            g.write('image;circle(%.2f, %.2f, 20 \n' \
+                     %(dpoi['x'][midx][k], dpoi['y'][midx][k]))
+        f.close()
+        g.close()
 
 
 # Printing the running time
