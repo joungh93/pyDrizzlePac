@@ -53,10 +53,15 @@ for w_dir in glob.glob('Phot_*'):
             imgidx = nchip*i+j
             sci_name = imglist['sci'][imgidx].split('.fits')[0]
 
-            dat = fits.getdata(phot_dir+imglist['sci'][imgidx], header=False)
+            dat, hdr = fits.getdata(phot_dir+imglist['sci'][imgidx], header=True)
 
             h0 = fits.getheader(phot_dir+imglist['raw'][imgidx], ext=0)
             w = hstwcs.HSTWCS(phot_dir+imglist['raw'][imgidx]+'[SCI,%d]' %(j+1))
+            epadu = h0['CCDGAIN']
+            if (h0['INSTRUME'] == 'ACS'):
+                zmag = -2.5*np.log10(hdr['PHOTFLAM'])-5.0*np.log10(hdr['PHOTPLAM'])-2.408
+            if (h0['INSTRUME'] == 'WFC3'):
+                zmag = -2.5*np.log10(h0['PHOTFLAM'])-5.0*np.log10(h0['PHOTPLAM'])-2.408
 
             # Sky & sky sigma estimation
             dat = dat.byteswap().newbyteorder()
@@ -79,15 +84,18 @@ for w_dir in glob.glob('Phot_*'):
             # Aperture photmetry
             flx1, e_flx1, flag1 = sep.sum_circle(dat_sub, src['x'], src['y'],
                                                  ip.r_ap1, err=bkg.globalrms,
-                                                 gain=ip.gain, subpix=0)
+                                                 gain=epadu, subpix=0)
             flx2, e_flx2, flag2 = sep.sum_circle(dat_sub, src['x'], src['y'],
                                                  ip.r_ap2, err=bkg.globalrms,
-                                                 gain=ip.gain, subpix=0)
-            itime, exptime = h0['EXPTIME'], h0['EXPTIME']
+                                                 gain=epadu, subpix=0)
+            if (hdr['BUNIT'] == 'ELECTRONS'):
+                itime, exptime = h0['EXPTIME'], h0['EXPTIME']
+            if (hdr['BUNIT'] == 'ELECTRONS/S'):
+                itime, exptime = 1.0, 1.0
             nflx1, nflx2 = flx1/itime, flx2/itime
             tflx1, tflx2 = nflx1*exptime, nflx2*exptime
-            mag1 = ip.zmag - 2.5*np.log10(nflx1)
-            mag2 = ip.zmag - 2.5*np.log10(nflx2)
+            mag1 = zmag - 2.5*np.log10(nflx1)
+            mag2 = zmag - 2.5*np.log10(nflx2)
             e_mag1 = (2.5/np.log(10.0)) * (e_flx1/tflx1)
             e_mag2 = (2.5/np.log(10.0)) * (e_flx2/tflx2)
 
