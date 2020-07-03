@@ -25,7 +25,7 @@ start_time = time.time()
 
 
 # ----- Initialization ----- #
-os.system('rm -rfv Phot_* tweak')
+os.system('rm -rfv Phot_* '+ip.dir_twk)
 os.system('rm -rfv '+ip.dir_out)
 os.system('mkdir '+ip.dir_out)
 
@@ -46,16 +46,19 @@ for i in np.arange(len(ip.img_name)):
         hfilt = hdr['FILTER']
         filt.append(hfilt)
     inst_filt.append(hdr['INSTRUME']+'/'+hfilt)
+inst, filt, inst_filt = np.array(inst), np.array(filt), np.array(inst_filt)
 
 
 # ----- Creating directories ----- #
-ufilt, uinst_filt = list(set(filt)), list(set(inst_filt))
-nfilt = len(ufilt)
+ufilt, uidx = np.unique(filt, return_index=True)
+uinst_filt = inst_filt[uidx]
+nfilt = len(uidx)
 
-os.system('mkdir tweak')
+
+os.system('mkdir '+ip.dir_twk)
 for i in np.arange(nfilt):
     os.system('mkdir Phot_'+ufilt[i][1:4])    # F475W -> 475, F850LP -> 850
-    os.system('mkdir tweak/drz_'+ufilt[i][1:4])
+    os.system('mkdir '+ip.dir_twk+'drz_'+ufilt[i][1:4])
 
 
 # ----- Copying images to the corresponding directories ----- #
@@ -83,8 +86,8 @@ for i in np.arange(nfilt):
     for j in np.arange(len(order)):
         f1.write(str(np.array(img)[order][j])+' \n')
     f1.close()
-    os.system('cp -rpv input.list ../tweak/input_'+ufilt[i][1:4]+'.list')
-    os.system('cp -rpv input.list ../tweak/'+'drz_'+ufilt[i][1:4]+'/input_'+ufilt[i][1:4]+'.list')
+    os.system('cp -rpv input.list ../'+ip.dir_twk+'input_'+ufilt[i][1:4]+'.list')
+    os.system('cp -rpv input.list ../'+ip.dir_twk+'drz_'+ufilt[i][1:4]+'/input_'+ufilt[i][1:4]+'.list')
 
     # Making catalog.list ---> ACS 2 CCD chips & WFC3/IR 1 CCD chip
     f2 = open('catalog.list', 'w')
@@ -94,7 +97,7 @@ for i in np.arange(nfilt):
         if (uinst_filt[i].split('/')[0] == 'WFC3'):
             f2.write(str(np.array(img)[order][j])+' f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_sci1.mat.coo'+' \n')
     f2.close()
-    os.system('cp -rpv catalog.list ../tweak/catalog_'+ufilt[i][1:4]+'.list')
+    os.system('cp -rpv catalog.list ../'+ip.dir_twk+'catalog_'+ufilt[i][1:4]+'.list')
 
     # Creating cosmic ray removed images ---> ACS 4 extensions & WFC3/IR 2 extensions
     os.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])
