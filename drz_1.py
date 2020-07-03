@@ -33,14 +33,20 @@ for di in dir_drz:
 	os.chdir(di)
 	os.system('rm -rfv final*.fits')
 	
+	nimg = len(glob.glob('*_fl*.fits'))
+	if (nimg <= 6):
+		cb_type = 'minmed'
+	elif (nimg > 6):
+		cb_type = 'median'
+	
 	if (di == dir_drz[0]):
 		astrodrizzle.AstroDrizzle('@input_'+flt+'.list', preserve=False, driz_sep_kernel='gaussian', driz_sep_pixfrac=1.0,
-			                      combine_type='minmed', combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=ip.pixscl1,
+			                      combine_type=cb_type, combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=ip.pixscl1,
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360)
 	else:
 		os.system('cp -rpv ../../'+ip.dir_out+ip.ref_flt+'.fits .')
 		astrodrizzle.AstroDrizzle('@input_'+flt+'.list', preserve=False, driz_sep_kernel='gaussian', driz_sep_pixfrac=1.0,
-			                      combine_type='minmed', combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=ip.pixscl1,
+			                      combine_type=cb_type, combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=ip.pixscl1,
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360,
 			                      final_refimage=ip.ref_flt+'.fits')
 
