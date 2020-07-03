@@ -44,8 +44,8 @@ for di in dir_drz:
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360,
 			                      final_refimage=ip.ref_flt+'.fits')
 
-	os.system('rm -rfv final_drc_ctx.fits final_med.fits *single* *mask*.fits *blt.fits *Mask.fits')
-	os.system('cp -rpv final_drc_sci.fits ../../'+ip.dir_out+flt+'.fits')
+	os.system('rm -rfv final_dr*_ctx.fits final_med.fits *single* *mask*.fits *blt.fits *Mask.fits')
+	os.system('cp -rpv final_dr*_sci.fits ../../'+ip.dir_out+flt+'.fits')
 	os.chdir('../')
 
 
