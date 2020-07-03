@@ -22,8 +22,6 @@ img_name = glob.glob(dir_img+'*.fits')    # Names of raw images
 
 
 # ----- Initial photometric parameters ----- #
-zmag = 25.0    # Magnitude zeropoint
-gain = 2.0    # GAIN value
 fwhm = 2.0    # FWHM of point sources
 r_ap1, r_ap2 = 3.0, 6.0    # Radii of apertures for photometry
 detect_thresh = 1.5    # Detection threshold (sigma)
@@ -39,7 +37,7 @@ mag_hi_cut = 25.0    # Fainter magnitude cut
 
 
 # ----- Initial setting for running drizzlepac ----- #
-ref_flt = '850'    # Reference filter
+ref_flt = '814'    # Reference filter
 pixscl1 = 0.05    # arcsec/pix (final)
 dir_twk = 'tweak/'    # The directory for running TWEAKREG
 dir_out = 'Results/'    # Output image directory
