@@ -103,7 +103,7 @@ for i in np.arange(nfilt):
     os.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])
     f = open('image_names.log','w')    
     for j in np.arange(len(order)):
-        # hd0 = fits.getheader(str(np.array(img)[order][j]), ext=0)
+        hd0 = fits.getheader(str(np.array(img)[order][j]), ext=0)
         if (uinst_filt[i].split('/')[0] == 'ACS'):
             ext_list = [1, 3, 4, 6]
         if (uinst_filt[i].split('/')[0] == 'WFC3'):
@@ -116,9 +116,10 @@ for i in np.arange(nfilt):
                 # cr = (dq >= ip.cr_thre)
                 # if (np.sum(cr) >= 1):
                 #     sci[cr] = ip.cr_mask
-                crmask, cleanarr = detect_cosmics(sci, gain=ip.gain, cleantype='medmask')
+                epadu = hd0['CCDGAIN']
+                crmask, cleanarr = detect_cosmics(sci, gain=epadu, cleantype='medmask')
                 fits.writeto('f'+ufilt[i][1:4]+'_%02d_sci%1d.fits' %(j+1, 1+k//2),
-                             cleanarr/ip.gain, hdr, overwrite=True)
+                             cleanarr/epadu, hdr, overwrite=True)
                 f.write(str(np.array(img)[order][j]))
                 f.write('\t')
                 f.write('f'+ufilt[i][1:4]+'_%02d_sci%1d.fits' %(j+1, 1+k//2))
