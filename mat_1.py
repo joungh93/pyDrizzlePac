@@ -202,6 +202,9 @@ for w_dir in glob.glob('Phot_*'):
     src0 = SkyCoord(ra=ra_ref*u.degree, dec=dec_ref*u.degree)
     for i in np.arange(len(imglist)):
         sci_name = pkl_name[i].split('/')[1].split('.pkl')[0]
+        flt_name = sci_name.split('_')[0].split('f')[1]
+        raw_name = imglist['raw'][imglist['sci'] == sci_name+'.fits'].item()
+        
         dcut = np.genfromtxt(phot_dir+sci_name+'.cut.coo',
                              dtype=None, encoding='ascii', names=('ra','dec'))
         ra, dec = dcut['ra'], dcut['dec']
@@ -215,20 +218,39 @@ for w_dir in glob.glob('Phot_*'):
         print("# Point sources --- {0:d},{1:d} : {2:d} matched \n".format(len(ra), len(ra_ref), n_mch))
 
         # Writing matched catalogs & regions
-        dpoi = np.genfromtxt(phot_dir+sci_name+'.cut.dat',
-                             dtype=None, encoding='ascii', names=('x','y','flx'))
-        f = open(phot_dir+sci_name+'.mat.coo','w')
-        g = open(phot_dir+sci_name+'.mat.reg','w')
-        g.write('global color=red font="helvetica 10 normal" ')
-        g.write('select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
-        for k in np.arange(n_mch):
-            f.write('%.2f  %.2f  %.2f \n' \
-                     %(dpoi['x'][midx][k], dpoi['y'][midx][k], dpoi['flx'][midx][k]))
-            g.write('image;circle(%.2f, %.2f, 20 \n' \
-                     %(dpoi['x'][midx][k], dpoi['y'][midx][k]))
-        f.close()
-        g.close()
+        if (n_mch > 0):
+            dpoi = np.genfromtxt(phot_dir+sci_name+'.cut.dat',
+                                 dtype=None, encoding='ascii', names=('x','y','flx'))
+            f = open(phot_dir+sci_name+'.mat.coo','w')
+            g = open(phot_dir+sci_name+'.mat.reg','w')
+            g.write('global color=red font="helvetica 10 normal" ')
+            g.write('select=1 edit=1 move=1 delete=1 include=1 fixed=0 source width=2 \n')
+            for k in np.arange(n_mch):
+                f.write('%.2f  %.2f  %.2f \n' \
+                        %(dpoi['x'][midx][k], dpoi['y'][midx][k], dpoi['flx'][midx][k]))
+                g.write('image;circle(%.2f, %.2f, 20 \n' \
+                        %(dpoi['x'][midx][k], dpoi['y'][midx][k]))
+            f.close()
+            g.close()
 
+        # Deleting the line with non-matched images
+        else:
+            with open(ip.dir_twk+'input_'+flt_name+'.list','r+') as ff:
+                ff_lines = ff.readlines()
+                ff.seek(0)
+                for line in ff_lines:
+                    if (raw_name not in line):
+                        ff.write(line)
+                ff.truncate()
+            os.system('cp -rpv '+ip.dir_twk+'input_'+flt_name+'.list '+ip.dir_twk+'drz_'+flt_name+'/')
+
+            with open(ip.dir_twk+'catalog_'+flt_name+'.list','r+') as gg:
+                gg_lines = gg.readlines()
+                gg.seek(0)
+                for line in gg_lines:
+                    if (raw_name not in line):
+                        gg.write(line)
+                gg.truncate()
 
 # Printing the running time
 print('\n')
