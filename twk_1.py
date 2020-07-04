@@ -81,7 +81,7 @@ for i in np.arange(len(non_ref)):
 		tweakreg.TweakReg('@input_'+twk+'.list', interactive=False, updatehdr=True,
 			              runfile='tweakreg_'+twk+'.log', wcsname='TWEAK_'+twk+'_'+str(i+1),
 			              catfile='catalog_'+twk+'.list',
-			              xcol=1, ycol=2, fluxcol=3, minobj=15, searchrad=ip.tolerance,
+			              xcol=1, ycol=2, fluxcol=3, minobj=ip.n_minobj, searchrad=ip.tolerance,
 						  tolerance=2.0)		
 
 
