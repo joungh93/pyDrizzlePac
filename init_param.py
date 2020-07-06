@@ -32,7 +32,7 @@ err_cut = 0.40    # Magnitude error cut
 cidx_lo_cut = 0.05    # Lower C index cut
 cidx_hi_cut = 0.60    # Higher C index cut
 mag_lo_cut = 17.0    # Rrighter magnitude cut
-mag_hi_cut = 26.0    # Fainter magnitude cut
+mag_hi_cut = 27.0    # Fainter magnitude cut
 
 
 # ----- Initial setting for running drizzlepac ----- #
