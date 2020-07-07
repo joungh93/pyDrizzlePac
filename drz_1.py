@@ -44,14 +44,15 @@ for di in dir_drz:
 			                      combine_type=cb_type, combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=ip.pixscl1,
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360)
 	else:
-		os.system('cp -rpv ../../'+ip.dir_out+ip.ref_flt+'.fits .')
+		os.system('cp -rpv ../../'+ip.dir_out+ip.ref_flt+'_sci.fits .')
 		astrodrizzle.AstroDrizzle('@input_'+flt+'.list', preserve=False, driz_sep_kernel='gaussian', driz_sep_pixfrac=1.0,
 			                      combine_type=cb_type, combine_nlow=0, combine_nhigh=1, final_kernel='gaussian', final_scale=ip.pixscl1,
 			                      skymethod='globalmin+match', driz_sep_bits=32, driz_cr_scale='1.5 1.2', final_bits=352, final_wcs=True, final_rot=360,
 			                      final_refimage=ip.ref_flt+'.fits')
 
 	os.system('rm -rfv final_dr*_ctx.fits final_med.fits *single* *mask*.fits *blt.fits *Mask.fits')
-	os.system('cp -rpv final_dr*_sci.fits ../../'+ip.dir_out+flt+'.fits')
+	os.system('cp -rpv final_dr*_sci.fits ../../'+ip.dir_out+flt+'_sci.fits')
+	os.system('cp -rpv final_dr*_wht.fits ../../'+ip.dir_out+flt+'_wht.fits')
 	os.chdir('../')
 
 
