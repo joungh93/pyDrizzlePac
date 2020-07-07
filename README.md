@@ -1,5 +1,5 @@
 # pyDrizzlePac
-(updated on 2020. 07. 02.)
+(updated on 2020. 07. 07.)
 
 
 ## Description
@@ -56,6 +56,7 @@ sh run.sh
 
 
 ## Future works
+* Current version only focuses on drizzling the images of ``*_flc.fits`` or ``*_flt.fits`` for the same target or field. If you use images from different target of field, the matched point sources for running ``TweakReg`` task might not be found. This is a fundamental problem of ``DrizzlePac``, so we recommend to use images from the same target or similar field. 
 * Current version sets the reference image to the shot with _**the first observation date**_.
 This setting is generally good enough to get well-drizzled image, but it could get some troubles if the image with the first observation date has bad quality.
 It can be possible in the future version to choose the reference image as one wants to use.
