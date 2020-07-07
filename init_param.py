@@ -14,7 +14,7 @@ import glob, os
 # ----- Raw images ----- #
 dir_img = 'Images/'    # Raw data directory
 img_name = glob.glob(dir_img+'*.fits')    # Names of raw images
-date_order = False    # Order of image (the first image will be the reference.)
+date_order = True    # Order of image (the first image will be the reference.)
 
 
 # # ----- Cosmic ray masking parameters ----- #
