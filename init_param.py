@@ -12,7 +12,7 @@ import glob, os
 
 
 # ----- Raw images ----- #
-dir_img = 'Images/'    # Raw data directory
+dir_img = '../Raw/'    # Raw data directory
 img_name = glob.glob(dir_img+'*.fits')    # Names of raw images
 date_order = True    # Order of image (the first image will be the reference.)
 
