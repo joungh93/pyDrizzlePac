@@ -74,13 +74,21 @@ for i in np.arange(nfilt):
     os.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])
     img = glob.glob('*_fl*.fits')    # *_flc.fits (ACS), *_flt.fits (WFC3/IR)
     date = np.array([])
+    expt = np.array([])
 
     # Sorting with MJD
     for j in img:
         hdr = fits.getheader(j, ext=0)
         date = np.append(date, hdr['EXPSTART'])
-    order = date.argsort()
-    
+        expt = np.append(expt, hdr['EXPTIME'])
+
+    # Image order
+    if ip.date_order:
+    	order = date.argsort()
+    else:
+    	order = expt.argsort()[::-1]
+
+
     # Making input.list
     f1 = open('input.list', 'w')
     for j in np.arange(len(order)):
