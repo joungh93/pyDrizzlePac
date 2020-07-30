@@ -63,3 +63,9 @@ It can be possible in the future version to choose the reference image as one wa
 * Iterations of drizzling might be added.
 
 To update this code is an on-going task... :crying_cat_face: :sweat_drops:
+
+
+## Acknowledgements
+* J.S. Kang helped me a lot to improve the performance of this package and debug its errors. :blush:
+
+
