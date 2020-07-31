@@ -66,7 +66,8 @@ To update this code is an on-going task... :crying_cat_face: :sweat_drops:
 
 
 ## Acknowledgements
-* J.S. Kang helped me a lot to debug the errors of this package and test it. :blush:
-* I.S. Jang &  J.S. Kang provided the IDL source codes to do this job. I converted them to this Python package. :blush:
+:blush: J.S. Kang helped me a lot to debug the errors of this package and test it.
+
+:blush: I.S. Jang &  J.S. Kang provided the IDL source codes to do this job. I converted them to this Python package. 
 
 
