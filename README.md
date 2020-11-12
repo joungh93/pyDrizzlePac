@@ -19,7 +19,7 @@ A Python package for automatically drizzling the raw data of the Hubble Space Te
 * The ``astroconda`` environment which contains ``DrizzlePac`` module should be installed. ([Reference link](https://astroconda.readthedocs.io/en/latest/getting_started.html#))
   * ``drizzlepac >= 3.1.6`` ([Reference link](https://drizzlepac.readthedocs.io/en/latest/))
 * [init_param.py](https://github.com/joungh93/pyDrizzlePac/blob/master/init_param.py) is the initial configurations to run the drizzle tasks. (You can revise it!)
-* Available instruments: ACS/WFC, WFC3/IR, WFC3/UVIS
+* Available instruments: [ACS/WFC](https://www.stsci.edu/hst/instrumentation/acs/instrument-design), [WFC3/IR](https://www.stsci.edu/hst/instrumentation/wfc3/instrument-design), [WFC3/UVIS](https://www.stsci.edu/hst/instrumentation/wfc3/instrument-design)
 
 
 ## Workflows
