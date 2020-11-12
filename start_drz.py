@@ -57,7 +57,7 @@ nfilt = len(uidx)
 
 os.system('mkdir '+ip.dir_twk)
 for i in np.arange(nfilt):
-    os.system('mkdir Phot_'+ufilt[i][1:4])    # F475W -> 475, F850LP -> 850
+    os.system('mkdir Phot_'+ufilt[i][1:4])    # i.e. F475W -> 475, F850LP -> 850
     os.system('mkdir '+ip.dir_twk+'drz_'+ufilt[i][1:4])
 
 
@@ -72,7 +72,7 @@ current_dir = os.getcwd()
 
 for i in np.arange(nfilt):
     os.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])
-    img = glob.glob('*_fl*.fits')    # *_flc.fits (ACS), *_flt.fits (WFC3/IR)
+    img = glob.glob('*_fl*.fits')    # *_flc.fits (ACS, WFC3/UVIS), *_flt.fits (WFC3/IR)
     date = np.array([])
     expt = np.array([])
 
@@ -97,7 +97,7 @@ for i in np.arange(nfilt):
     os.system('cp -rpv input.list ../'+ip.dir_twk+'input_'+ufilt[i][1:4]+'.list')
     os.system('cp -rpv input.list ../'+ip.dir_twk+'drz_'+ufilt[i][1:4]+'/input_'+ufilt[i][1:4]+'.list')
 
-    # Making catalog.list ---> ACS 2 CCD chips & WFC3/IR 1 CCD chip
+    # Making catalog.list ---> ACS, WFC3/UVIS 2 CCD chips & WFC3/IR 1 CCD chip
     f2 = open('catalog.list', 'w')
     for j in np.arange(len(order)):
         if (uinst_filt[i].split('/')[0] == 'ACS'):
@@ -107,7 +107,7 @@ for i in np.arange(nfilt):
     f2.close()
     os.system('cp -rpv catalog.list ../'+ip.dir_twk+'catalog_'+ufilt[i][1:4]+'.list')
 
-    # Creating cosmic ray removed images ---> ACS 4 extensions & WFC3/IR 2 extensions
+    # Creating cosmic ray removed images ---> ACS, WFC3/UVIS 4 extensions & WFC3/IR 2 extensions
     os.chdir(current_dir+'/'+'Phot_'+ufilt[i][1:4])
     f = open('image_names.log','w')    
     for j in np.arange(len(order)):
