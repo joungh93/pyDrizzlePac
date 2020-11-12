@@ -100,9 +100,11 @@ for i in np.arange(nfilt):
     # Making catalog.list ---> ACS, WFC3/UVIS 2 CCD chips & WFC3/IR 1 CCD chip
     f2 = open('catalog.list', 'w')
     for j in np.arange(len(order)):
-        if (uinst_filt[i].split('/')[0] == 'ACS'):
+        hdr = fits.getheader(str(np.array(img)[order][j]), ext=0)
+        if ((uinst_filt[i].split('/')[0] == 'ACS') | \
+            ((uinst_filt[i].split('/')[0] == 'WFC3') & (hdr['DETECTOR'] == 'UVIS'))):
             f2.write(str(np.array(img)[order][j])+' f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_sci1.mat.coo'+' f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_sci2.mat.coo'+' \n')
-        if (uinst_filt[i].split('/')[0] == 'WFC3'):
+        if ((uinst_filt[i].split('/')[0] == 'WFC3') & (hdr['DETECTOR'] == 'IR')):
             f2.write(str(np.array(img)[order][j])+' f'+ufilt[i][1:4]+'_%02d' %(j+1)+'_sci1.mat.coo'+' \n')
     f2.close()
     os.system('cp -rpv catalog.list ../'+ip.dir_twk+'catalog_'+ufilt[i][1:4]+'.list')
@@ -112,9 +114,10 @@ for i in np.arange(nfilt):
     f = open('image_names.log','w')    
     for j in np.arange(len(order)):
         hd0 = fits.getheader(str(np.array(img)[order][j]), ext=0)
-        if (uinst_filt[i].split('/')[0] == 'ACS'):
+        if ((uinst_filt[i].split('/')[0] == 'ACS') | \
+            ((uinst_filt[i].split('/')[0] == 'WFC3') & (hd0['DETECTOR'] == 'UVIS'))):
             ext_list = [1, 3, 4, 6]
-        if (uinst_filt[i].split('/')[0] == 'WFC3'):
+        if ((uinst_filt[i].split('/')[0] == 'WFC3') & (hd0['DETECTOR'] == 'IR')):
             ext_list = [1, 3]
         for k in np.arange(len(ext_list)):
             if (k % 2 == 0):
