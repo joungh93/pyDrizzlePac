@@ -58,10 +58,25 @@ for w_dir in glob.glob('Phot_*'):
             h0 = fits.getheader(phot_dir+imglist['raw'][imgidx], ext=0)
             w = hstwcs.HSTWCS(phot_dir+imglist['raw'][imgidx]+'[SCI,%d]' %(j+1))
             epadu = h0['CCDGAIN']
+            
+            # ACS
             if (h0['INSTRUME'] == 'ACS'):
                 zmag = -2.5*np.log10(hdr['PHOTFLAM'])-5.0*np.log10(hdr['PHOTPLAM'])-2.408
-            if (h0['INSTRUME'] == 'WFC3'):
+            
+            # WFC3/IR
+            if ((h0['INSTRUME'] == 'WFC3') & (h0['DETECTOR'] == 'IR')):
                 zmag = -2.5*np.log10(h0['PHOTFLAM'])-5.0*np.log10(h0['PHOTPLAM'])-2.408
+            
+            # WFC3/UVIS
+            if ((h0['INSTRUME'] == 'WFC3') & (h0['DETECTOR'] == 'UVIS')):
+                if (h0['FLUXCORR'] == 'COMPLETE'):
+                    pflam = hdr['PHOTFLAM']
+                else:
+                    if (hdr['CCDCHIP'] == 1):
+                        pflam = hdr['PHTFLAM1']
+                    if (hdr['CCDCHIP'] == 2):
+                        pflam = hdr['PHTFLAM2']
+                zmag = -2.5*np.log10(pflam)-5.0*np.log10(hdr['PHOTPLAM'])-2.408
 
             # Sky & sky sigma estimation
             dat = dat.byteswap().newbyteorder()
@@ -88,10 +103,15 @@ for w_dir in glob.glob('Phot_*'):
             flx2, e_flx2, flag2 = sep.sum_circle(dat_sub, src['x'], src['y'],
                                                  ip.r_ap2, err=bkg.globalrms,
                                                  gain=epadu, subpix=0)
+            
+            # ACS, WFC3/UVIS
             if (hdr['BUNIT'] == 'ELECTRONS'):
                 itime, exptime = h0['EXPTIME'], h0['EXPTIME']
+            
+            # WFC3/IR
             if (hdr['BUNIT'] == 'ELECTRONS/S'):
                 itime, exptime = 1.0, 1.0
+            
             nflx1, nflx2 = flx1/itime, flx2/itime
             tflx1, tflx2 = nflx1*exptime, nflx2*exptime
             mag1 = zmag - 2.5*np.log10(nflx1)
