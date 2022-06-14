@@ -58,6 +58,9 @@ for di in dir_drz:
 
 # ----- After astrodrizzle task ----- #
 os.chdir(current_dir)
+os.system("rm -rfv Phot_*/*_fl*.fits")
+os.system("rm -rfv "+ip.dir_twk+"*_fl*.fits")
+os.system("rm -rfv "+ip.dir_twk+"drz_*/*_fl*.fits")
 
 
 # Printing the running time
